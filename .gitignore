@@ -1,0 +1,10 @@
+# Docker
+docker/data/
+
+# PHP
+vendor/
+*.log
+
+# Sistema
+.DS_Store
+.env
