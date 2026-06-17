@@ -1,17 +1,23 @@
-FROM php:8.2-apache
+FROM php:8.0-apache
 
 # Habilita o mod_rewrite do Apache (necessário para URLs amigáveis)
 RUN a2enmod rewrite
 
 # Instala dependências do sistema necessárias para compilar a extensão MongoDB
+# e para o Composer conseguir extrair pacotes (unzip)
 RUN apt-get update && apt-get install -y \
     libssl-dev \
     libsasl2-dev \
     pkg-config \
+    libzip-dev \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Instala a extensão MongoDB via PECL
 RUN pecl install mongodb && docker-php-ext-enable mongodb
+
+# Instala a extensão zip do PHP (necessária para o Composer)
+RUN docker-php-ext-install zip
 
 # Instala o Composer (gerenciador de dependências PHP)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
