@@ -1,9 +1,10 @@
 FROM php:8.0-apache
 
-# Habilita o mod_rewrite do Apache (necessário para URLs amigáveis)
+# Habilita o mod_rewrite do Apache (necessÃ¡rio para URLs amigÃ¡veis)
 RUN a2enmod rewrite
 
-# Instala dependências do sistema necessárias para compilar a extensão MongoDB
+# Instala dependÃªncias do sistema necessÃ¡rias para compilar a extensÃ£o MongoDB
+# e para o Composer conseguir extrair pacotes (unzip)
 # e para o Composer conseguir extrair pacotes (unzip)
 RUN apt-get update && apt-get install -y \
     libssl-dev \
@@ -11,18 +12,26 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     libzip-dev \
     unzip \
+    libzip-dev \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
-# Instala a extensão MongoDB via PECL
+# Instala a extensÃ£o MongoDB via PECL
 RUN pecl install mongodb && docker-php-ext-enable mongodb
 
-# Instala a extensão zip do PHP (necessária para o Composer)
+# Instala a extensï¿½o zip do PHP (necessï¿½ria para o Composer)
 RUN docker-php-ext-install zip
 
-# Instala o Composer (gerenciador de dependências PHP)
+# Instala a extensï¿½o zip do PHP (necessï¿½ria para o Composer)
+RUN docker-php-ext-install zip
+
+# Instala a extensÃ£o zip do PHP (necessÃ¡ria para o Composer)
+RUN docker-php-ext-install zip
+
+# Instala o Composer (gerenciador de dependÃªncias PHP)
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Define a pasta pública como raiz do Apache
+# Define a pasta pÃºblica como raiz do Apache
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
