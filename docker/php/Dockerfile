@@ -5,25 +5,26 @@ RUN a2enmod rewrite
 
 # Instala dependências do sistema necessárias para compilar a extensão MongoDB
 # e para o Composer conseguir extrair pacotes (unzip)
-# e para o Composer conseguir extrair pacotes (unzip)
 RUN apt-get update && apt-get install -y \
     libssl-dev \
     libsasl2-dev \
     pkg-config \
     libzip-dev \
     unzip \
-    libzip-dev \
-    unzip \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# Instala a extensão MongoDB via PECL
-RUN pecl install mongodb && docker-php-ext-enable mongodb
-
-# Instala a extens�o zip do PHP (necess�ria para o Composer)
-RUN docker-php-ext-install zip
-
-# Instala a extens�o zip do PHP (necess�ria para o Composer)
-RUN docker-php-ext-install zip
+# Compila e instala a extensão MongoDB diretamente do código-fonte (contorna
+# instabilidades do servidor PECL)
+RUN git clone -b 1.19.3 https://github.com/mongodb/mongo-php-driver.git /tmp/mongo-php-driver \
+    && cd /tmp/mongo-php-driver \
+    && git submodule update --init \
+    && phpize \
+    && ./configure \
+    && make -j$(nproc) \
+    && make install \
+    && docker-php-ext-enable mongodb \
+    && rm -rf /tmp/mongo-php-driver
 
 # Instala a extensão zip do PHP (necessária para o Composer)
 RUN docker-php-ext-install zip
