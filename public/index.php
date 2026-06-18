@@ -1,5 +1,7 @@
 <?php
 
+header('Content-Type: text/html; charset=utf-8');
+
 // 1. Ativa a exibição de erros na tela para nos ajudar no desenvolvimento local
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
