@@ -17,4 +17,25 @@ class Product
         $cursor = self::collection()->find();
         return $cursor->toArray();
     }
+
+    public static function find(string $id): ?\stdClass
+    {
+        try {
+            $objectId = new \MongoDB\BSON\ObjectId($id);
+            
+            // Passamos o typeMap para converter o documento BSON diretamente em stdClass do PHP
+            return self::collection()->findOne(
+                ['_id' => $objectId],
+                [
+                    'typeMap' => [
+                        'root' => 'stdClass',
+                        'document' => 'stdClass',
+                        'array' => 'array'
+                    ]
+                ]
+            );
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
 }

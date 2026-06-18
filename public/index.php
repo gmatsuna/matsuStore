@@ -16,9 +16,8 @@ $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 // 4. Nossa tabela de rotas (Mapeamento de URL -> [Controller, Método])
 $routes = [
-    '/' => [\App\Controllers\HomeController::class, 'index'],
-    // No futuro, adicionaremos outras aqui:
-    // '/produto' => [\App\Controllers\ProductController::class, 'show'],
+    '/'        => [\App\Controllers\HomeController::class, 'index'],
+    '/produto' => [\App\Controllers\ProductController::class, 'show'],
 ];
 
 // 5. Verifica se a URL digitada existe no nosso mapa de rotas

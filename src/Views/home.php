@@ -6,7 +6,7 @@
     <section class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 text-white shadow-md">
         <div class="max-w-md">
             <h2 class="text-3xl font-extrabold tracking-tight sm:text-4xl">Moda & Estilo Urbano</h2>
-            <p class="mt-3 text-lg text-indigo-100">Confira as melhores ofertas com frete grátis para todo o Brasil neste mês.</p>
+            <p class="mt-3 text-lg text-indigo-100">Confira as melhores ofertas com frete grÃ¡tis para todo o Brasil neste mÃªs.</p>
             <div class="mt-5">
                 <a href="#" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-600 bg-white hover:bg-indigo-50 shadow-sm transition">Aproveitar Oferta</a>
             </div>
@@ -32,9 +32,9 @@
                     
                     <div class="pt-4 flex items-center justify-between border-t border-gray-100 mt-2">
                         <span class="text-xl font-black text-gray-900">R$ <?= number_format($product->price, 2, ',', '.') ?></span>
-                        <button class="bg-gray-900 text-white hover:bg-indigo-600 px-3 py-2 rounded-lg text-sm font-semibold transition">
-                            Comprar
-                        </button>
+                        <a href="/produto?id=<?= (string)$product->_id ?>" class="bg-gray-900 text-white hover:bg-indigo-600 px-3 py-2 rounded-lg text-sm font-semibold transition text-center">
+                            Ver Detalhes
+                        </a>
                     </div>
                 </div>
             </div>

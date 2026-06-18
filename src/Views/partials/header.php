@@ -21,7 +21,7 @@
             <div class="flex items-center space-x-4">
                 <span class="text-sm font-medium cursor-pointer hover:text-indigo-600 transition">Minha Conta</span>
                 <div class="relative cursor-pointer">
-                    <span class="text-xl">??</span>
+                    <span class="text-xl">🛒</span>
                     <span class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
                 </div>
             </div>
