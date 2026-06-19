@@ -1,30 +1,67 @@
 <?php
-require __DIR__ . '/vendor/autoload.php';
+
+require_once __DIR__ . '/vendor/autoload.php';
 
 use App\Config\Database;
 
-$db = Database::getDatabase();
-$collection = $db->selectCollection('products');
+try {
+    echo "? Conectando ao MongoDB para atualizar o estoque da matsuStore...\n";
+    $collection = Database::getDatabase()->selectCollection('products');
 
-$collection->insertMany([
-    [
-        'name' => 'Camiseta BÃ¡sica',
-        'price' => 49.90,
-        'description' => 'Camiseta 100% algodÃ£o, confortÃ¡vel para o dia a dia.',
-        'stock' => 25,
-    ],
-    [
-        'name' => 'TÃªnis Esportivo',
-        'price' => 199.90,
-        'description' => 'Ideal para corrida e atividades fÃ­sicas.',
-        'stock' => 12,
-    ],
-    [
-        'name' => 'Mochila Casual',
-        'price' => 89.90,
-        'description' => 'Mochila resistente com compartimento para notebook.',
-        'stock' => 8,
-    ],
-]);
+    // 1. Limpa os produtos antigos para não duplicar ou misturar temas
+    $collection->deleteMany([]);
+    echo "?? Estoque antigo limpo com sucesso.\n";
 
-echo "âœ… Produtos inseridos com sucesso!\n";
+    // 2. Novos produtos inspirados na NPB (Liga Japonesa)
+    $products = [
+        [
+            'name' => 'Taco de Madeira Mizuno Pro - Yomiuri Giants Edition',
+            'description' => 'Taco profissional de Maple confeccionado no Japão. Modelo oficial utilizado pelos rebatedores do tradicional Yomiuri Giants de Tóquio.',
+            'price' => 1250.00,
+            'category' => 'Tacos',
+            'team' => 'Yomiuri Giants'
+        ],
+        [
+            'name' => 'Luva de Infield SSK Proedge - Hanshin Tigers',
+            'description' => 'Luva premium de couro japonês legítimo, tamanho 11.5 polegadas. Edição limitada nas cores preta e amarela do atual campeão Hanshin Tigers.',
+            'price' => 2400.00,
+            'category' => 'Luvas',
+            'team' => 'Hanshin Tigers'
+        ],
+        [
+            'name' => 'Boné Oficial Majestic - Fukuoka SoftBank Hawks',
+            'description' => 'Boné de jogo ajustável com o icônico Sh-logo bordado em alta definição. Tecnologia de absorção de suor ideal para treinos e torcida.',
+            'price' => 289.90,
+            'category' => 'Vestuário',
+            'team' => 'Fukuoka SoftBank Hawks'
+        ],
+        [
+            'name' => 'Jersey de Jogo Home - Yokohama DeNA BayStars',
+            'description' => 'Camisa oficial listrada azul e branca com tecnologia de alta performance. Sinta o clima do Yokohama Stadium com o manto dos BayStars.',
+            'price' => 699.00,
+            'category' => 'Vestuário',
+            'team' => 'Yokohama DeNA BayStars'
+        ],
+        [
+            'name' => 'Caixa de Bolas Oficiais de Jogo Mizuno 200 - NPB',
+            'description' => 'Pack com 12 unidades das bolas oficiais utilizadas na liga japonesa. Miolo de cortiça e borracha envolto por lã premium e costuras vermelhas perfeitas.',
+            'price' => 450.00,
+            'category' => 'Bolas',
+            'team' => 'NPB'
+        ],
+        [
+            'name' => 'Capacete de Rebatida ZETT - Tokyo Yakult Swallows',
+            'description' => 'Proteção profissional com dupla orelha e acabamento fosco em azul marinho. Logotipo clássico do Yakult Swallows na parte frontal.',
+            'price' => 520.00,
+            'category' => 'Acessórios',
+            'team' => 'Tokyo Yakult Swallows'
+        ]
+    ];
+
+    // 3. Insere os novos dados no banco
+    $result = $collection->insertMany($products);
+    echo "?? Sucesso! " . $result->getInsertedCount() . " itens da NPB foram cadastrados no banco.\n";
+
+} catch (\Exception $e) {
+    echo "? Erro ao rodar o seed: " . $e->getMessage() . "\n";
+}
