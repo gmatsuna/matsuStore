@@ -11,27 +11,47 @@ error_reporting(E_ALL);
 require_once __DIR__ . '/../vendor/autoload.php';
 
 // 3. Captura a URL (URI) que o usuário digitou
-// O 'REQUEST_URI' traz algo como '/produtos' ou '/'
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// 4. Nossa tabela de rotas (Mapeamento de URL -> [Controller, Método])
+// 4. Captura o método HTTP usado (Se é GET ou POST)
+$methodHttp = $_SERVER['REQUEST_METHOD'];
+
+// 5. Nossa tabela de rotas atualizada
 $routes = [
     '/'        => [\App\Controllers\HomeController::class, 'index'],
     '/produto' => [\App\Controllers\ProductController::class, 'show'],
+    '/minha-conta' => [\App\Controllers\AccountController::class, 'index'],
+    '/logout'      => [\App\Controllers\AuthController::class, 'logout'],
 ];
 
-// 5. Verifica se a URL digitada existe no nosso mapa de rotas
+if ($uri === '/cadastro') {
+    if ($methodHttp === 'POST') {
+        $routes['/cadastro'] = [\App\Controllers\AuthController::class, 'register'];
+    } else {
+        $routes['/cadastro'] = [\App\Controllers\AuthController::class, 'showRegister'];
+    }
+}
+
+// === MICRO-AJUSTE DINÂMICO PARA O LOGIN ===
+if ($uri === '/login') {
+    if ($methodHttp === 'POST') {
+        $routes['/login'] = [\App\Controllers\AuthController::class, 'login'];
+    } else {
+        $routes['/login'] = [\App\Controllers\AuthController::class, 'showLogin'];
+    }
+}
+// =============================================
+
+// 6. Verifica se a URL digitada existe no nosso mapa de rotas
 if (array_key_exists($uri, $routes)) {
-    // Se existir, pegamos o nome da Classe e o Método
     [$controllerClass, $method] = $routes[$uri];
 
-    // Instanciamos o controlador dinamicamente (Ex: new HomeController())
+    // Instancia o controlador dinamicamente
     $controller = new $controllerClass();
 
-    // Chamamos o método dinamicamente (Ex: $controller->index())
+    // Chama o método dinamicamente
     $controller->$method();
 } else {
-    // Se a rota não existir, retornamos um erro 404 clássico
     http_response_code(404);
     echo "<h1>Erro 404 - Página não encontrada</h1>";
     echo "A rota <strong>" . htmlspecialchars($uri) . "</strong> não foi definida no sistema.";

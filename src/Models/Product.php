@@ -12,10 +12,21 @@ class Product
         return Database::getDatabase()->selectCollection('products');
     }
 
-    public static function all(): array
+    public static function all(array $filter = []): array
     {
-        $cursor = self::collection()->find();
-        return $cursor->toArray();
+        try {
+            // Passamos o $filter direto para o find() do MongoDB
+            // E mantemos o typeMap que resolveu nosso problema de tipagem!
+            return self::collection()->find($filter, [
+                'typeMap' => [
+                    'root' => 'stdClass',
+                    'document' => 'stdClass',
+                    'array' => 'array'
+                ]
+            ])->toArray();
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     public static function find(string $id): ?\stdClass

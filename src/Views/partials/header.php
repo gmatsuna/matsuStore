@@ -1,3 +1,13 @@
+<?php
+// Garante que o cabeçalho consiga ler o "crachá" da sessão
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+// Verifica se o usuário está logado
+$isLogged = isset($_SESSION['user']);
+$loggedUser = $isLogged ? $_SESSION['user'] : null;
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -14,12 +24,39 @@
                 matsu<span class="text-gray-900">Store</span>
             </div>
             
-            <div class="hidden md:flex flex-1 max-w-md mx-8">
-                <input type="text" placeholder="Buscar produtos..." class="w-full h-10 px-4 rounded-lg bg-gray-100 border-transparent focus:border-indigo-500 focus:bg-white focus:ring-0 text-sm transition">
-            </div>
+            <form action="/" method="GET" class="flex-1 max-w-lg mx-4 hidden sm:block">
+                <div class="relative text-gray-400 focus-within:text-emerald-600">
+                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        ⚾
+                    </div>
+                    <input 
+                        type="text" 
+                        name="busca" 
+                        value="<?= isset($_GET['busca']) ? htmlspecialchars($_GET['busca']) : '' ?>"
+                        placeholder="Procurar tacos, luvas, times da NPB..." 
+                        class="block w-full rounded-xl border-0 py-2 pl-10 pr-3 text-gray-900 bg-gray-100 placeholder:text-gray-400 focus:bg-white focus:ring-2 focus:ring-emerald-600 transition text-sm"
+                    >
+                </div>
+            </form>
 
             <div class="flex items-center space-x-4">
-                <span class="text-sm font-medium cursor-pointer hover:text-indigo-600 transition">Minha Conta</span>
+                <div class="flex items-center gap-4">
+                    <?php if ($isLogged): ?>
+                        <a href="/minha-conta" class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition flex items-center gap-1">
+                            <span>👤</span> Olá, <?= htmlspecialchars($loggedUser['name']) ?>
+                        </a>
+                        <a href="/logout" class="text-sm font-bold text-red-600 hover:text-red-700 transition flex items-center gap-1 border-l border-gray-200 pl-4">
+                            <span>🚪</span> Sair
+                        </a>
+                    <?php else: ?>
+                        <a href="/login" class="text-sm font-semibold text-gray-700 hover:text-emerald-600 transition">
+                            Entrar
+                        </a>
+                        <a href="/cadastro" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl text-sm transition shadow-sm">
+                            Cadastrar
+                        </a>
+                    <?php endif; ?>
+                </div>
                 <div class="relative cursor-pointer">
                     <span class="text-xl">🛒</span>
                     <span class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
