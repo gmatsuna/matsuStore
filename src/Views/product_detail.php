@@ -8,8 +8,12 @@
 
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-8 p-6">
         
-        <div class="bg-gray-100 rounded-xl h-96 w-full flex items-center justify-center text-gray-400 font-medium">
-            [ Imagem do Produto ]
+        <div class="bg-gray-100 rounded-xl h-96 w-full overflow-hidden flex items-center justify-center text-gray-400 font-medium">
+            <?php if (!empty($product->image) && file_exists(__DIR__ . '/../../public/assets/img/' . $product->image)): ?>
+                <img src="/assets/img/<?= $product->image ?>" alt="<?= htmlspecialchars($product->name) ?>" class="w-full h-full object-contain">
+            <?php else: ?>
+                <span class="text-lg">⚾ Sem imagem disponível</span>
+            <?php endif; ?>
         </div>
 
         <div class="flex flex-col justify-between py-2">
