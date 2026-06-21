@@ -22,6 +22,9 @@ $routes = [
     '/produto' => [\App\Controllers\ProductController::class, 'show'],
     '/minha-conta' => [\App\Controllers\AccountController::class, 'index'],
     '/logout'      => [\App\Controllers\AuthController::class, 'logout'],
+    '/carrinho'           => [\App\Controllers\CartController::class, 'index'],
+    '/carrinho/adicionar' => [\App\Controllers\CartController::class, 'add'],
+    '/carrinho/remover'   => [\App\Controllers\CartController::class, 'remove'],
 ];
 
 if ($uri === '/cadastro') {

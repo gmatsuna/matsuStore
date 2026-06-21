@@ -20,9 +20,11 @@ $loggedUser = $isLogged ? $_SESSION['user'] : null;
 
     <header class="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="text-2xl font-black tracking-wider text-indigo-600">
-                matsu<span class="text-gray-900">Store</span>
-            </div>
+            <a href="/" class="hover:opacity-85 transition inline-block">
+                <h1 class="text-2xl sm:text-3xl font-black tracking-tighter text-gray-900 uppercase">
+                    matsu<span class="text-emerald-600 font-extrabold text-opacity-90">Store</span>
+                </h1>
+            </a>
             
             <form action="/" method="GET" class="flex-1 max-w-lg mx-4 hidden sm:block">
                 <div class="relative text-gray-400 focus-within:text-emerald-600">
@@ -59,7 +61,7 @@ $loggedUser = $isLogged ? $_SESSION['user'] : null;
                 </div>
                 <div class="relative cursor-pointer">
                     <span class="text-xl">🛒</span>
-                    <span class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+                    <span class="absolute -top-2 -right-2 bg-emerald-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
                 </div>
             </div>
         </div>

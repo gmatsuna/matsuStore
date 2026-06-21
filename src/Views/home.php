@@ -3,22 +3,20 @@
 
 <div class="space-y-8 w-full">
 
-    <section class="bg-gradient-to-r from-emerald-700 to-teal-900 rounded-2xl p-8 text-white shadow-sm relative overflow-hidden">
+    <section class="bg-gradient-to-r from-emerald-700 to-teal-900 rounded-2xl p-8 text-white shadow-sm relative overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+    
+        <div class="max-w-md relative z-10 space-y-3">
+            <span class="text-xs font-bold uppercase tracking-widest bg-emerald-500 text-white px-2.5 py-1 rounded-full bg-opacity-30 inline-block">Pure Baseball</span>
+            <h2 class="text-3xl font-black tracking-tight sm:text-4xl">Viva a Paixão do Baseball Japonês</h2>
+            <p class="text-emerald-100 text-sm leading-relaxed max-w-sm">
+                Equipamentos profissionais das grandes marcas da NPB. Garanta mantos oficiais, tacos de Maple e luvas exclusivas com frete grátis para todo o Brasil.
+            </p>
+        </div>
+
         <div class="absolute right-4 bottom-2 opacity-10 pointer-events-none select-none hidden sm:block">
             <span class="text-7xl lg:text-8xl font-black tracking-tighter">MatsuStore</span>
         </div>
-        <div class="max-w-md relative z-10">
-            <span class="text-xs font-bold uppercase tracking-widest bg-emerald-500 text-white px-2.5 py-1 rounded-full bg-opacity-30">Pure Baseball</span>
-            <h2 class="text-3xl font-black tracking-tight sm:text-4xl mt-3">Viva a Paixão do Baseball Japonês</h2>
-            <p class="mt-3 text-emerald-100 text-sm leading-relaxed">
-                Equipamentos profissionais das grandes marcas da NPB. Garanta mantos oficiais, tacos de Maple e luvas exclusivas com frete grátis para todo o Brasil.
-            </p>
-            <div class="mt-6">
-                <a href="#" class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-sm font-bold rounded-xl text-emerald-900 bg-white hover:bg-emerald-50 shadow-sm transition">
-                    Ver Coleção de Jogo
-                </a>
-            </div>
-        </div>
+
     </section>
 
     <div class="flex items-center justify-between border-b border-gray-200 pb-4">

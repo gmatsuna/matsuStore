@@ -2,7 +2,7 @@
 <?php require __DIR__ . '/partials/sidebar.php'; ?>
 
 <div class="space-y-6 w-full">
-    <a href="/" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition flex items-center gap-1">
+    <a href="/" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition flex items-center gap-1">
         &larr; Voltar para a listagem
     </a>
 
@@ -18,7 +18,7 @@
 
         <div class="flex flex-col justify-between py-2">
             <div class="space-y-4">
-                <span class="text-xs font-bold text-indigo-600 tracking-wider uppercase bg-indigo-50 px-2.5 py-1 rounded-full">Disponível</span>
+                <span class="text-xs font-bold text-emerald-700 tracking-wider uppercase bg-emerald-50 px-2.5 py-1 rounded-full">Disponível</span>
                 <h1 class="text-3xl font-black text-gray-900"><?= htmlspecialchars($product->name) ?></h1>
                 <p class="text-2xl font-black text-gray-900">R$ <?= number_format($product->price, 2, ',', '.') ?></p>
                 <div class="border-t border-gray-100 pt-4">
@@ -28,7 +28,7 @@
             </div>
 
             <div class="pt-6 border-t border-gray-100 mt-6">
-                <button class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition shadow-md shadow-indigo-100">
+                <button class="w-full bg-gray-900 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-xl transition shadow-md shadow-gray-100">
                     Adicionar ao Carrinho
                 </button>
             </div>

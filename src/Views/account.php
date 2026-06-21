@@ -3,18 +3,21 @@
 
 <div class="space-y-8 w-full">
     
-    <div class="bg-gradient-to-r from-emerald-700 to-teal-900 rounded-2xl p-8 text-white shadow-sm relative overflow-hidden">
-        <div class="absolute right-4 bottom-2 opacity-10 pointer-events-none select-none hidden sm:block">
-            <span class="text-7xl lg:text-8xl font-black tracking-tighter">MatsuStore</span>
-        </div>
-        <div class="max-w-md relative z-10">
-            <span class="text-xs font-bold uppercase tracking-widest bg-emerald-500 text-white px-2.5 py-1 rounded-full bg-opacity-30">Pure Baseball</span>
-            <h1 class="text-3xl font-black tracking-tight sm:text-4xl mt-3">Olá, <?= htmlspecialchars($user['name']) ?>!</h1>
-            <p class="mt-3 text-emerald-100 text-sm leading-relaxed">
+    <section class="bg-gradient-to-r from-emerald-700 to-teal-900 rounded-2xl p-8 text-white shadow-sm relative overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+    
+        <div class="max-w-md relative z-10 space-y-3">
+            <span class="text-xs font-bold uppercase tracking-widest bg-emerald-500 text-white px-2.5 py-1 rounded-full bg-opacity-30 inline-block">Pure Baseball</span>
+            <h1 class="text-3xl font-black tracking-tight sm:text-4xl">Olá, <?= htmlspecialchars($user['name']) ?>!</h1>
+            <p class="text-emerald-100 text-sm leading-relaxed max-w-sm">
                 Sua conta está ativa e protegida. Você faz parte da matsuStore desde <?= htmlspecialchars($user['member_since']) ?>.
             </p>
         </div>
-    </div>
+
+        <div class="absolute right-4 bottom-2 opacity-10 pointer-events-none select-none hidden sm:block">
+            <span class="text-7xl lg:text-8xl font-black tracking-tighter">MatsuStore</span>
+        </div>
+
+    </section>
 
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
         <div class="flex items-center justify-between border-b border-gray-200 p-4 bg-gray-50">
