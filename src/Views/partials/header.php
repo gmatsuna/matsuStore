@@ -59,10 +59,21 @@ $loggedUser = $isLogged ? $_SESSION['user'] : null;
                         </a>
                     <?php endif; ?>
                 </div>
-                <div class="relative cursor-pointer">
+                <!-- Subsitua a tag <a> do carrinho por esta versão corrigida: -->
+                <a href="/carrinho" class="relative hover:opacity-85 transition inline-flex items-center ml-4">
                     <span class="text-xl">🛒</span>
-                    <span class="absolute -top-2 -right-2 bg-emerald-600 text-white text-xs w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
-                </div>
+                    <?php 
+                        $totalItens = 0;
+                        if (!empty($_SESSION['cart'])) {
+                            foreach ($_SESSION['cart'] as $item) {
+                                $totalItens += $item['quantity'];
+                            }
+                        }
+                    ?>
+                    <span class="absolute -top-1.5 -right-2 bg-emerald-600 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black dynamic-cart-badge">
+                        <?= $totalItens ?>
+                    </span>
+                </a>
             </div>
         </div>
     </header>

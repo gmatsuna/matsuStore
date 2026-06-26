@@ -27,11 +27,21 @@
                 </div>
             </div>
 
-            <div class="pt-6 border-t border-gray-100 mt-6">
-                <button class="w-full bg-gray-900 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-xl transition shadow-md shadow-gray-100">
-                    Adicionar ao Carrinho
-                </button>
-            </div>
+            <form action="/carrinho/adicionar" method="POST" class="pt-6 border-t border-gray-100 mt-6 flex items-center gap-4">
+                <input type="hidden" name="product_id" value="<?= (string)$product->_id ?>">
+                
+                <div class="w-20">
+                    <label class="block text-[10px] font-bold uppercase text-gray-400 mb-1">Qtd</label>
+                    <input type="number" name="quantity" value="1" min="1" max="10" required 
+                           class="w-full border border-gray-200 rounded-xl text-center p-3 bg-gray-50 font-bold focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition text-sm">
+                </div>
+
+                <div class="flex-1 pt-4">
+                    <button type="submit" class="w-full bg-gray-900 hover:bg-emerald-600 text-white font-bold py-3.5 px-6 rounded-xl transition shadow-md shadow-gray-100 flex items-center justify-center gap-2 text-sm">
+                        <span>🛒</span> Adicionar ao Carrinho
+                    </button>
+                </div>
+            </form>
         </div>
 
     </div>

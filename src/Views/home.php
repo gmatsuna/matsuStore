@@ -3,12 +3,15 @@
 
 <div class="space-y-8 w-full">
 
+    <!-- BANNER DA HOME (AJUSTADO PARA NÃO SOBREPOR O 'M') -->
     <section class="bg-gradient-to-r from-emerald-700 to-teal-900 rounded-2xl p-8 text-white shadow-sm relative overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-    
-        <div class="max-w-md relative z-10 space-y-3">
+        
+        <!-- Restringido para max-w-sm e adicionado md:pr-4 para criar a barreira antes do 'M' -->
+        <div class="max-w-sm relative z-10 space-y-3 md:pr-4">
             <span class="text-xs font-bold uppercase tracking-widest bg-emerald-500 text-white px-2.5 py-1 rounded-full bg-opacity-30 inline-block">Pure Baseball</span>
             <h2 class="text-3xl font-black tracking-tight sm:text-4xl">Viva a Paixão do Baseball Japonês</h2>
-            <p class="text-emerald-100 text-sm leading-relaxed max-w-sm">
+            <!-- Forçado max-w-xs para quebrar o texto ("da NPB", "exclusivas") de forma harmônica -->
+            <p class="text-emerald-100 text-sm leading-relaxed max-w-xs">
                 Equipamentos profissionais das grandes marcas da NPB. Garanta mantos oficiais, tacos de Maple e luvas exclusivas com frete grátis para todo o Brasil.
             </p>
         </div>

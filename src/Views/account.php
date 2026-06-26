@@ -3,12 +3,15 @@
 
 <div class="space-y-8 w-full">
     
+    <!-- BANNER DA ÁREA DO USUÁRIO (PROTEÇÃO CONTRA SOBREPOSIÇÃO NO 'M') -->
     <section class="bg-gradient-to-r from-emerald-700 to-teal-900 rounded-2xl p-8 text-white shadow-sm relative overflow-hidden grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-    
-        <div class="max-w-md relative z-10 space-y-3">
+        
+        <!-- Restringido para max-w-sm e adicionado md:pr-4 para o texto quebrar antes do 'M' -->
+        <div class="max-w-sm relative z-10 space-y-3 md:pr-4">
             <span class="text-xs font-bold uppercase tracking-widest bg-emerald-500 text-white px-2.5 py-1 rounded-full bg-opacity-30 inline-block">Pure Baseball</span>
             <h1 class="text-3xl font-black tracking-tight sm:text-4xl">Olá, <?= htmlspecialchars($user['name']) ?>!</h1>
-            <p class="text-emerald-100 text-sm leading-relaxed max-w-sm">
+            <!-- Forçado max-w-xs para quebra de linha harmônica da descrição -->
+            <p class="text-emerald-100 text-sm leading-relaxed max-w-xs">
                 Sua conta está ativa e protegida. Você faz parte da matsuStore desde <?= htmlspecialchars($user['member_since']) ?>.
             </p>
         </div>

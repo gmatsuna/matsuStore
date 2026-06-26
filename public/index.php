@@ -18,14 +18,37 @@ $methodHttp = $_SERVER['REQUEST_METHOD'];
 
 // 5. Nossa tabela de rotas atualizada
 $routes = [
-    '/'        => [\App\Controllers\HomeController::class, 'index'],
-    '/produto' => [\App\Controllers\ProductController::class, 'show'],
-    '/minha-conta' => [\App\Controllers\AccountController::class, 'index'],
-    '/logout'      => [\App\Controllers\AuthController::class, 'logout'],
-    '/carrinho'           => [\App\Controllers\CartController::class, 'index'],
-    '/carrinho/adicionar' => [\App\Controllers\CartController::class, 'add'],
-    '/carrinho/remover'   => [\App\Controllers\CartController::class, 'remove'],
+    'GET' => [
+        '/'                 => [\App\Controllers\HomeController::class, 'index'],
+        '/produto'          => [\App\Controllers\ProductController::class, 'show'],
+        '/minha-conta'      => [\App\Controllers\AccountController::class, 'index'],
+        '/logout'           => [\App\Controllers\AuthController::class, 'logout'],
+        '/carrinho'         => [\App\Controllers\CartController::class, 'index'],
+        '/cadastro'         => [\App\Controllers\AuthController::class, 'showRegister'],
+        '/login'            => [\App\Controllers\AuthController::class, 'showLogin'],
+    ],
+    'POST' => [
+        '/cadastro'           => [\App\Controllers\AuthController::class, 'register'],
+        '/login'              => [\App\Controllers\AuthController::class, 'login'],
+        '/carrinho/adicionar' => [\App\Controllers\CartController::class, 'add'],
+        '/carrinho/remover'   => [\App\Controllers\CartController::class, 'remove'],
+        '/carrinho/atualizar' => [\App\Controllers\CartController::class, 'updateQuantity'], // <-- ADICIONE ESTA LINHA!
+    ]
 ];
+
+if (isset($routes[$methodHttp]) && array_key_exists($uri, $routes[$methodHttp])) {
+    [$controllerClass, $method] = $routes[$methodHttp][$uri];
+
+    // Instancia o controlador dinamicamente
+    $controller = new $controllerClass();
+
+    // Chama o método dinamicamente
+    $controller->$method();
+} else {
+    http_response_code(404);
+    echo "<h1>Erro 404 - Página não encontrada</h1>";
+    echo "A rota <strong>" . htmlspecialchars($uri) . "</strong> não foi definida para o método <strong>" . $methodHttp . "</strong>.";
+}
 
 if ($uri === '/cadastro') {
     if ($methodHttp === 'POST') {

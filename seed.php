@@ -12,7 +12,7 @@ try {
     $collection->deleteMany([]);
     echo "🧹 Estoque antigo limpo com sucesso.\n";
 
-    // 2. Novos produtos inspirados na NPB (Liga Japonesa)
+    // 2. Novos produtos inspirados na NPB (Liga Japonesa) com estoque definido
     $products = [
         [
             'name' => 'Taco de Madeira Mizuno Pro - Yomiuri Giants Edition',
@@ -20,7 +20,8 @@ try {
             'price' => 1250.00,
             'category' => 'Tacos',
             'team' => 'Yomiuri Giants',
-            'image' => 'taco-mizuno.jpg' // <-- Nome do arquivo local
+            'image' => 'taco-mizuno.webp',
+            'stock' => 5 // Estoque baixo para testar o limite facilmente
         ],
         [
             'name' => 'Luva de Infield SSK Proedge - Hanshin Tigers',
@@ -28,7 +29,8 @@ try {
             'price' => 2400.00,
             'category' => 'Luvas',
             'team' => 'Hanshin Tigers',
-            'image' => 'luva-ssk.jpg'
+            'image' => 'luva-ssk.jpeg',
+            'stock' => 3 // Bem limitado!
         ],
         [
             'name' => 'Boné Oficial Majestic - Fukuoka SoftBank Hawks',
@@ -36,7 +38,8 @@ try {
             'price' => 289.90,
             'category' => 'Vestuário',
             'team' => 'Fukuoka SoftBank Hawks',
-            'image' => 'bone-hawks.jpg'
+            'image' => 'bone-hawks.png',
+            'stock' => 15
         ],
         [
             'name' => 'Jersey de Jogo Home - Yokohama DeNA BayStars',
@@ -44,7 +47,8 @@ try {
             'price' => 699.00,
             'category' => 'Vestuário',
             'team' => 'Yokohama DeNA BayStars',
-            'image' => 'jersey-baystars.jpg'
+            'image' => 'jersey-baystars.png',
+            'stock' => 8
         ],
         [
             'name' => 'Caixa de Bolas Oficiais de Jogo Mizuno 200 - NPB',
@@ -52,7 +56,8 @@ try {
             'price' => 450.00,
             'category' => 'Bolas',
             'team' => 'NPB',
-            'image' => 'bolas-npb.jpg'
+            'image' => 'bolas-npb.png',
+            'stock' => 20
         ],
         [
             'name' => 'Capacete de Rebatida ZETT - Tokyo Yakult Swallows',
@@ -60,13 +65,14 @@ try {
             'price' => 520.00,
             'category' => 'Acessórios',
             'team' => 'Tokyo Yakult Swallows',
-            'image' => 'capacete-zett.jpg'
+            'image' => 'capacete-zett.webp',
+            'stock' => 4
         ]
     ];
 
     // 3. Insere os novos dados no banco
     $result = $collection->insertMany($products);
-    echo "🚀 Sucesso! " . $result->getInsertedCount() . " itens da NPB foram cadastrados no banco.\n";
+    echo "🚀 Sucesso! " . $result->getInsertedCount() . " itens da NPB foram cadastrados no banco com controle de estoque.\n";
 
 } catch (\Exception $e) {
     echo "❌ Erro ao rodar o seed: " . $e->getMessage() . "\n";
