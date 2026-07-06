@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Config\Database;
+
 class AccountController
 {
     public function index()
@@ -18,10 +20,18 @@ class AccountController
         }
 
         // Se chegou aqui, está logado! Pega os dados reais guardados na sessão
-        $user = $_SESSION['user'];
+        $user = $_SESSION['user']['id'];
 
-        // Histórico de pedidos (pode começar vazio para novos usuários)
-        $orders = []; 
+        $db = Database::getDatabase();
+
+        // Conecta ao banco de dados e procura os pedidos do utilizador ativos ordenados pelos mais recentes
+        // Substitua o bloco do find por este:
+        $cursor = $db->orders->find(
+            ['user_id' => $user],
+            ['sort' => ['created_at' => -1]]
+        );
+
+        $orders = iterator_to_array($cursor);
 
         // Carrega a tela visual da conta
         require_once __DIR__ . '/../Views/account.php';

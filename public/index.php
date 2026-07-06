@@ -26,13 +26,15 @@ $routes = [
         '/carrinho'         => [\App\Controllers\CartController::class, 'index'],
         '/cadastro'         => [\App\Controllers\AuthController::class, 'showRegister'],
         '/login'            => [\App\Controllers\AuthController::class, 'showLogin'],
+        '/checkout'         => [\App\Controllers\CheckoutController::class, 'index'],
     ],
     'POST' => [
         '/cadastro'           => [\App\Controllers\AuthController::class, 'register'],
         '/login'              => [\App\Controllers\AuthController::class, 'login'],
         '/carrinho/adicionar' => [\App\Controllers\CartController::class, 'add'],
         '/carrinho/remover'   => [\App\Controllers\CartController::class, 'remove'],
-        '/carrinho/atualizar' => [\App\Controllers\CartController::class, 'updateQuantity'], // <-- ADICIONE ESTA LINHA!
+        '/carrinho/atualizar' => [\App\Controllers\CartController::class, 'updateQuantity'],
+        '/pedido/finalizar'   => [\App\Controllers\CheckoutController::class, 'finish'],
     ]
 ];
 
@@ -44,41 +46,12 @@ if (isset($routes[$methodHttp]) && array_key_exists($uri, $routes[$methodHttp]))
 
     // Chama o método dinamicamente
     $controller->$method();
+
+    exit;
+
 } else {
     http_response_code(404);
     echo "<h1>Erro 404 - Página não encontrada</h1>";
     echo "A rota <strong>" . htmlspecialchars($uri) . "</strong> não foi definida para o método <strong>" . $methodHttp . "</strong>.";
 }
 
-if ($uri === '/cadastro') {
-    if ($methodHttp === 'POST') {
-        $routes['/cadastro'] = [\App\Controllers\AuthController::class, 'register'];
-    } else {
-        $routes['/cadastro'] = [\App\Controllers\AuthController::class, 'showRegister'];
-    }
-}
-
-// === MICRO-AJUSTE DINÂMICO PARA O LOGIN ===
-if ($uri === '/login') {
-    if ($methodHttp === 'POST') {
-        $routes['/login'] = [\App\Controllers\AuthController::class, 'login'];
-    } else {
-        $routes['/login'] = [\App\Controllers\AuthController::class, 'showLogin'];
-    }
-}
-// =============================================
-
-// 6. Verifica se a URL digitada existe no nosso mapa de rotas
-if (array_key_exists($uri, $routes)) {
-    [$controllerClass, $method] = $routes[$uri];
-
-    // Instancia o controlador dinamicamente
-    $controller = new $controllerClass();
-
-    // Chama o método dinamicamente
-    $controller->$method();
-} else {
-    http_response_code(404);
-    echo "<h1>Erro 404 - Página não encontrada</h1>";
-    echo "A rota <strong>" . htmlspecialchars($uri) . "</strong> não foi definida no sistema.";
-}
