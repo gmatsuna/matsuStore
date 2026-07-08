@@ -108,6 +108,14 @@ class CheckoutController
             // 7. Insere na coleção "orders"
             $db->orders->insertOne($orderDocument);
 
+            $productsCollection = $db->selectCollection('products');
+            foreach ($cartItems as $productId => $item) {
+                $productsCollection->updateOne(
+                    ['_id' => new \MongoDB\BSON\ObjectId($productId)],
+                    ['$inc' => ['stock' => -((int)$item['quantity'])]]
+                );
+            }
+
             // 8. Limpa o carrinho da sessão já que o pedido foi fechado com sucesso
             unset($_SESSION['cart']);
 

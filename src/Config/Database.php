@@ -13,7 +13,17 @@ class Database
     {
         if (self::$client === null) {
             $env = self::loadEnv();
-            self::$client = new Client($env['MONGODB_URI']);
+            
+            // Configura o driver para converter automaticamente documentos BSON em Arrays do PHP
+            $options = [
+                'typeMap' => [
+                    'root'     => 'array',
+                    'document' => 'array',
+                    'array'    => 'array'
+                ]
+            ];
+
+            self::$client = new Client($env['MONGODB_URI'], [], $options);
         }
 
         return self::$client;

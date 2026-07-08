@@ -24,6 +24,14 @@ class CartController
      */
     public function index()
     {
+
+        // 🛡️ TRAVA DE SEGURANÇA: Se não estiver logado, redireciona para a página de login
+        if (!isset($_SESSION['user'])) {
+            $_SESSION['error'] = "Você precisa estar logado para acessar ou gerenciar seu carrinho de compras.";
+            header('Location: /login');
+            exit;
+        }
+        
         // Pega os itens salvos no carrinho (ou um array vazio se não houver nada)
         $cartItems = $_SESSION['cart'] ?? [];
 

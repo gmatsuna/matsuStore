@@ -31,10 +31,14 @@ class AuthController
                 return;
             }
 
+            // Garante que a senha salva no registro seja criptografada com Bcrypt
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
             User::create([
                 'name' => $name,
                 'email' => $email,
-                'password' => $password
+                'password' => $hashedPassword,
+                'role' => 'client' // Por padrão, novos cadastros são clientes comuns
             ]);
 
             header('Location: /login');
@@ -68,20 +72,27 @@ class AuthController
             // Busca o usuário no MongoDB pelo e-mail informado
             $user = User::findByEmail($email);
 
-            // Verifica se o usuário existe e se a senha descriptografada bate com o hash
-            if ($user && password_verify($password, $user->password)) {
-                
-                // Cria o "crachá digital" salvando os dados na Sessão
-                $_SESSION['user'] = [
-                    'id' => (string)$user->_id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'member_since' => $user->member_since ?? date('M, Y')
-                ];
+            if ($user) {
+                // 🌟 PROTEÇÃO: Força a conversão para array para blindar contra variações do driver
+                $user = (array) $user;
 
-                // Login funcionou! Redireciona para o painel de gerenciamento da conta
-                header('Location: /minha-conta');
-                exit;
+                // Verifica se a senha informada bate com o hash armazenado
+                if (password_verify($password, $user['password'])) {
+                    $_SESSION['user'] = [
+                        'id'    => (string)$user['_id'],
+                        'name'  => $user['name'],
+                        'email' => $user['email'],
+                        'role'  => $user['role'] ?? 'client' // Se não tiver o campo, assume que é cliente comum
+                    ];
+                    
+                    // Redirecionamento inteligente: Se for funcionário, já manda direto pro painel!
+                    if ($_SESSION['user']['role'] === 'employee') {
+                        header('Location: /admin');
+                    } else {
+                        header('Location: /minha-conta');
+                    }
+                    exit;
+                }
             }
         }
 
@@ -108,6 +119,160 @@ class AuthController
 
         // Manda o usuário limpo de volta para a Home
         header('Location: /');
+        exit;
+    }
+
+    /**
+     * Exibe a tela de "Esqueci a Senha" (GET /esqueci-senha)
+     */
+    public function showForgotPassword()
+    {
+        require __DIR__ . '/../Views/auth/forgot_password.php';
+    }
+
+    /**
+     * Processa o envio do formulário de recuperação (POST /esqueci-senha)
+     */
+    public function sendResetLink()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $email = trim($_POST['email'] ?? '');
+
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['error'] = "Por favor, insira um e-mail válido.";
+            header('Location: /esqueci-senha');
+            exit;
+        }
+
+        $database = \App\Config\Database::getDatabase();
+        $userCollection = $database->selectCollection('users');
+        
+        $user = $userCollection->findOne(['email' => $email]);
+
+        if (!$user) {
+            $_SESSION['error'] = "Nenhuma conta encontrada com este endereço de e-mail.";
+            header('Location: /esqueci-senha');
+            exit;
+        }
+
+        // Garante leitura segura como objeto
+        $user = (object) $user;
+
+        $token = bin2hex(random_bytes(32));
+        $expiry = time() + 3600; 
+
+        $userCollection->updateOne(
+            ['_id' => $user->_id],
+            ['$set' => [
+                'reset_token' => $token,
+                'reset_expiry' => $expiry
+            ]]
+        );
+
+        $resetLink = "http://localhost:8080/redefinir-senha?token=" . $token;
+
+        $_SESSION['success'] = "Link gerado com sucesso! (Simulação de E-mail): <br><a href='{$resetLink}' class='underline font-bold text-emerald-900'>Clique aqui para redefinir a senha</a>";
+
+        header('Location: /esqueci-senha');
+        exit;
+    }
+
+    /**
+     * Exibe a tela para digitar a nova senha (GET /redefinir-senha)
+     */
+    public function showResetPassword()
+    {
+        $token = $_GET['token'] ?? '';
+
+        if (empty($token)) {
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            $_SESSION['error'] = "Token de recuperação ausente ou inválido.";
+            header('Location: /login');
+            exit;
+        }
+
+        $database = \App\Config\Database::getDatabase();
+        $userCollection = $database->selectCollection('users');
+        $user = $userCollection->findOne(['reset_token' => $token]);
+
+        if (!$user) {
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            $_SESSION['error'] = "Este link de recuperação expirou ou é inválido.";
+            header('Location: /esqueci-senha');
+            exit;
+        }
+
+        $user = (object) $user;
+
+        if (!isset($user->reset_expiry) || time() > $user->reset_expiry) {
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            $_SESSION['error'] = "Este link de recuperação expirou ou é inválido.";
+            header('Location: /esqueci-senha');
+            exit;
+        }
+
+        $userEmail = $user->email;
+
+        require __DIR__ . '/../Views/auth/reset_password.php';
+    }
+
+    /**
+     * Valida os dados e altera a senha no MongoDB (POST /redefinir-senha)
+     */
+    public function resetPassword()
+    {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+
+        $token = trim($_POST['token'] ?? '');
+        $password = $_POST['password'] ?? '';
+        $passwordConfirm = $_POST['password_confirm'] ?? '';
+
+        if (empty($token) || empty($password)) {
+            $_SESSION['error'] = "Dados inválidos para redefinição.";
+            header("Location: /redefinir-senha?token={$token}");
+            exit;
+        }
+
+        if ($password !== $passwordConfirm) {
+            $_SESSION['error'] = "As senhas digitadas não coincidem.";
+            header("Location: /redefinir-senha?token={$token}");
+            exit;
+        }
+
+        $database = \App\Config\Database::getDatabase();
+        $userCollection = $database->selectCollection('users');
+
+        $user = $userCollection->findOne(['reset_token' => $token]);
+
+        if (!$user) {
+            $_SESSION['error'] = "Este link de recuperação expirou ou é inválido. Solicite um novo.";
+            header('Location: /esqueci-senha');
+            exit;
+        }
+
+        $user = (object) $user;
+
+        if (!isset($user->reset_expiry) || time() > $user->reset_expiry) {
+            $_SESSION['error'] = "Este link de recuperação expirou ou é inválido. Solicite um novo.";
+            header('Location: /esqueci-senha');
+            exit;
+        }
+
+        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+        $userCollection->updateOne(
+            ['_id' => $user->_id],
+            [
+                '$set' => ['password' => $hashedPassword],
+                '$unset' => ['reset_token' => '', 'reset_expiry' => '']
+            ]
+        );
+
+        $_SESSION['success'] = "Sua senha foi redefinida com sucesso! Pode fazer o login.";
+        header('Location: /login');
         exit;
     }
 }

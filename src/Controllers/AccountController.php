@@ -15,6 +15,7 @@ class AccountController
 
         // SE NÃO EXISTIR o usuário na sessão, redireciona imediatamente para o login
         if (!isset($_SESSION['user'])) {
+            $_SESSION['error'] = "Você precisa estar logado para acessar esta área.";
             header('Location: /login');
             exit;
         }

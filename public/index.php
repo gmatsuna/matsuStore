@@ -27,6 +27,9 @@ $routes = [
         '/cadastro'         => [\App\Controllers\AuthController::class, 'showRegister'],
         '/login'            => [\App\Controllers\AuthController::class, 'showLogin'],
         '/checkout'         => [\App\Controllers\CheckoutController::class, 'index'],
+        '/esqueci-senha'      => [\App\Controllers\AuthController::class, 'showForgotPassword'],
+        '/redefinir-senha'    => [\App\Controllers\AuthController::class, 'showResetPassword'],
+        '/admin'            => [\App\Controllers\AdminController::class, 'index'],
     ],
     'POST' => [
         '/cadastro'           => [\App\Controllers\AuthController::class, 'register'],
@@ -35,6 +38,10 @@ $routes = [
         '/carrinho/remover'   => [\App\Controllers\CartController::class, 'remove'],
         '/carrinho/atualizar' => [\App\Controllers\CartController::class, 'updateQuantity'],
         '/pedido/finalizar'   => [\App\Controllers\CheckoutController::class, 'finish'],
+        '/esqueci-senha'      => [\App\Controllers\AuthController::class, 'sendResetLink'],
+        '/redefinir-senha'    => [\App\Controllers\AuthController::class, 'resetPassword'],
+        '/admin/produto/salvar'     => [\App\Controllers\AdminController::class, 'save'],
+        '/admin/produto/atualizar-estoque' => [\App\Controllers\AdminController::class, 'updateStock'],
     ]
 ];
 
