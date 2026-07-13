@@ -78,4 +78,4 @@ $loggedUser = $isLogged ? $_SESSION['user'] : null;
         </div>
     </header>
 
-    <div class="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-1 py-6 gap-6">
+    <div class="max-w-full mx-auto w-full px-4 sm:px-6 lg:px-12 flex flex-1 py-6 gap-6">

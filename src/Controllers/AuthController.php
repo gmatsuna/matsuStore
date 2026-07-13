@@ -78,16 +78,29 @@ class AuthController
 
                 // Verifica se a senha informada bate com o hash armazenado
                 if (password_verify($password, $user['password'])) {
+                    
+                    // 🛡️ TRAVA DE SEGURANÇA: Verifica se a conta está ativa
+                    // Se o campo não existir, consideramos ativo (true) por compatibilidade com usuários antigos
+                    $isAtivo = isset($user['isativo']) ? (bool)$user['isativo'] : true;
+
+                    if ($isAtivo === false) {
+                        $_SESSION['login_error'] = "Sua conta está desativada. Entre em contato com o administrador.";
+                        header('Location: /login');
+                        exit;
+                    }
+
                     $_SESSION['user'] = [
                         'id'    => (string)$user['_id'],
                         'name'  => $user['name'],
                         'email' => $user['email'],
-                        'role'  => $user['role'] ?? 'client' // Se não tiver o campo, assume que é cliente comum
+                        'role'  => $user['role'] ?? 'client',
+                        'isadmin' => (bool)($user['isadmin'] ?? false)
                     ];
                     
-                    // Redirecionamento inteligente: Se for funcionário, já manda direto pro painel!
-                    if ($_SESSION['user']['role'] === 'employee') {
-                        header('Location: /admin');
+                    if ($_SESSION['user']['isadmin'] === true) {
+                        header('Location: /admin/dashboard');
+                    } else if ($_SESSION['user']['role'] === 'employee') {
+                        header('Location: /employee');
                     } else {
                         header('Location: /minha-conta');
                     }

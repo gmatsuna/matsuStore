@@ -5,10 +5,10 @@
     
     <div class="flex items-center justify-between border-b border-gray-200 pb-4">
         <div class="flex items-center gap-2">
-            <span class="text-2xl">⚙️</span>
-            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Painel Administrativo</h1>
+            <span class="text-2xl">📦</span>
+            <h1 class="text-2xl font-bold tracking-tight text-gray-900">Painel Operacional</h1>
         </div>
-        <span class="text-xs font-bold uppercase tracking-wider bg-gray-100 text-gray-600 px-3 py-1 rounded-full">MatsuStore Admin</span>
+        <span class="text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-700 px-3 py-1 rounded-full">MatsuStore Funcionário</span>
     </div>
 
     <?php if (isset($_SESSION['success'])): ?>
@@ -26,35 +26,35 @@
         
         <div class="bg-white rounded-xl border border-gray-200 p-6 shadow-sm space-y-4">
             <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Cadastrar Novo Produto</h2>
-            <form action="/admin/produto/salvar" method="POST" class="space-y-4 text-sm">
+            <form action="/employee/produto/salvar" method="POST" class="space-y-4 text-sm">
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Nome do Item</label>
-                    <input type="text" name="name" required placeholder="Ex: Luva SSK Proedge" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
+                    <input type="text" name="name" required placeholder="Ex: Luva SSK Proedge" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none transition">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Preço (R$)</label>
-                        <input type="number" step="0.01" name="price" required placeholder="1499.90" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
+                        <input type="number" step="0.01" name="price" required placeholder="1499.90" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Estoque Inicial</label>
-                        <input type="number" name="stock" required placeholder="10" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
+                        <input type="number" name="stock" required placeholder="10" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none transition">
                     </div>
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Categoria</label>
-                    <input type="text" name="category" placeholder="Ex: Luvas, Bastões" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
+                    <input type="text" name="category" placeholder="Ex: Luvas, Bastões" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none transition">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Nome do Arquivo de Imagem</label>
-                    <input type="text" name="image" placeholder="Ex: luva_ssk.png" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
+                    <input type="text" name="image" placeholder="Ex: luva_ssk.png" class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-600 outline-none transition">
                 </div>
 
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl transition text-center shadow-sm uppercase tracking-wider text-xs">
-                    Gravar no MongoDB ➔
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl transition text-center shadow-sm uppercase tracking-wider text-xs">
+                    Gravar Produto ➔
                 </button>
             </form>
         </div>
@@ -78,17 +78,17 @@
                             </div>
                             <div class="min-w-0">
                                 <h4 class="font-bold text-gray-800 truncate"><?= htmlspecialchars($prod['name']) ?></h4>
-                                <p class="text-xs text-emerald-600 font-semibold">R$ <?= number_format($prod['price'], 2, ',', '.') ?></p>
+                                <p class="text-xs text-blue-600 font-semibold">R$ <?= number_format($prod['price'], 2, ',', '.') ?></p>
                             </div>
                         </div>
 
-                        <form action="/admin/produto/atualizar-estoque" method="POST" class="flex items-center gap-2 shrink-0">
+                        <form action="/employee/produto/atualizar-estoque" method="POST" class="flex items-center gap-2 shrink-0">
                             <input type="hidden" name="product_id" value="<?= (string)$prod['_id'] ?>">
                             <div class="flex items-center border border-gray-200 rounded-xl bg-gray-50 px-2">
                                 <span class="text-xs font-bold text-gray-400 uppercase mr-1">Qtd:</span>
                                 <input type="number" name="stock" value="<?= $prod['stock'] ?>" class="w-16 p-2 bg-transparent text-center font-bold text-gray-800 outline-none text-xs" min="0">
                             </div>
-                            <button type="submit" class="bg-gray-900 hover:bg-emerald-600 text-white p-2.5 rounded-xl transition text-xs font-bold">
+                            <button type="submit" class="bg-gray-900 hover:bg-blue-600 text-white p-2.5 rounded-xl transition text-xs font-bold">
                                 Salvar
                             </button>
                         </form>

@@ -50,6 +50,41 @@
                 </p>
             </div>
         </div>
+
+        <div class="mt-6 pt-6 border-t border-gray-100 space-y-3">
+    
+            <?php if (isset($_SESSION['user']['isadmin']) && $_SESSION['user']['isadmin']): ?>
+                <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">📊</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-purple-900">Painel do Administrador</h4>
+                            <p class="text-xs text-purple-700">Gerencie usuários, relatórios financeiros e dados estratégicos.</p>
+                        </div>
+                    </div>
+                    <a href="/admin/dashboard" class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition shadow-sm">
+                        Painel ADM ➔
+                    </a>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($_SESSION['user']['role']) && $_SESSION['user']['role'] === 'employee'): ?>
+                <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">📦</span>
+                        <div>
+                            <h4 class="text-sm font-bold text-blue-900">Área do Funcionário</h4>
+                            <p class="text-xs text-blue-700">Gerencie o estoque e produtos da MatsuStore.</p>
+                        </div>
+                    </div>
+                    <a href="/employee" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 rounded-lg transition shadow-sm">
+                        Acessar Painel ➔
+                    </a>
+                </div>
+            <?php endif; ?>
+            
+        </div>
+
     </div>
 
     <div class="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
