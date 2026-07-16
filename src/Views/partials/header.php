@@ -15,6 +15,7 @@ $loggedUser = $isLogged ? $_SESSION['user'] : null;
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>matsuStore</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 

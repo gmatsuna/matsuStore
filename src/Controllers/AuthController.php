@@ -31,13 +31,12 @@ class AuthController
                 return;
             }
 
-            // Garante que a senha salva no registro seja criptografada com Bcrypt
-            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
-
+            // 🌟 CORREÇÃO: Enviamos a senha limpa ($password) diretamente.
+            // O modelo User::create se encarregará de fazer o hash de forma única e segura.
             User::create([
                 'name' => $name,
                 'email' => $email,
-                'password' => $hashedPassword,
+                'password' => $password, // Modificado aqui!
                 'role' => 'client' // Por padrão, novos cadastros são clientes comuns
             ]);
 

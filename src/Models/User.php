@@ -17,14 +17,29 @@ class User
     /**
      * Salva um novo usuário no banco de dados
      */
+    /**
+     * Salva um novo usuário no banco de dados de forma padronizada
+     */
     public static function create(array $data): bool
     {
         try {
             // Criptografa a senha usando o algoritmo seguro BCRYPT antes de salvar
             $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
             
-            // Guarda o mês e ano em que a conta foi criada
-            $data['member_since'] = date('M, Y');
+            
+            // 1. Garante que campos ausentes de controle administrativo possuam valores padrão
+            if (!isset($data['isadmin'])) {
+                $data['isadmin'] = false;
+                }
+                if (!isset($data['isativo'])) {
+                    $data['isativo'] = true;
+                    }
+                    
+            // 2. Garante que o campo de data seja salvo usando a classe nativa do MongoDB
+            $data['created_at'] = new \MongoDB\BSON\UTCDateTime();
+
+            // Opcional: Remove o campo antigo caso ele venha no array por algum formulário
+            unset($data['member_since']);
             
             // Insere o documento no MongoDB
             self::collection()->insertOne($data);

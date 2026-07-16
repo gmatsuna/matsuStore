@@ -146,7 +146,7 @@
                     <a href="/checkout" class="block w-full text-center bg-gray-900 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl text-sm transition shadow-sm uppercase tracking-wider">
                         Finalizar Pedido ➔
                     </a>
-                    <a href="/" class="block text-center text-xs font-semibold text-gray-500 hover:text-emerald-600 transition hover:underline">
+                    <a href="/" class="block text-center text-base font-semibold text-gray-500 hover:text-emerald-600 transition hover:underline">
                         Continuar Comprando
                     </a>
                 </div>

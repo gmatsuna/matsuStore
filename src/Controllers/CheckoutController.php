@@ -2,131 +2,126 @@
 
 namespace App\Controllers;
 
-// Importamos a classe do banco com o namespace correto
 use App\Config\Database;
-use MongoDB\BSON\ObjectId;
+use Stripe\Stripe;
+use Stripe\PaymentIntent;
 
 class CheckoutController
 {
     public function index()
     {
-        // 1. Garante que a sessão esteja ativa
         if (session_status() === PHP_SESSION_NONE) {
             session_start();
         }
-
-        // 2. Se o usuário não estiver logado, redireciona para o login
+        
+        // Garante que o usuário está logado
         if (!isset($_SESSION['user'])) {
             header('Location: /login');
             exit;
         }
 
-        // 3. Captura os itens que já estão na sessão (igualzinho ao seu CartController)
-        $cartItems = $_SESSION['cart'] ?? [];
-
-        // 4. Se o carrinho estiver vazio, manda de volta para a página do carrinho
-        if (empty($cartItems)) {
+        // Garante que o carrinho possui itens
+        if (empty($_SESSION['cart'])) {
             header('Location: /carrinho');
             exit;
         }
 
-        // 5. Calcula o subtotal para passar para a View
-        $subtotal = 0;
-        foreach ($cartItems as $item) {
-            $subtotal += $item['price'] * $item['quantity'];
-        }
+        // Configura a SDK com sua chave de testes
+        Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
 
-        // 6. Carrega a view do frontend
-        require_once __DIR__ . '/../Views/checkout.php';
-    }
-
-    public function finish()
-    {
-        // 1. Garante que a sessão esteja ativa e o usuário logado
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        if (!isset($_SESSION['user'])) {
-            header('Location: /login');
-            exit;
-        }
-
-        // 2. Verifica se o carrinho existe e tem itens
-        $cartItems = $_SESSION['cart'] ?? [];
-        if (empty($cartItems)) {
-            header('Location: /carrinho');
-            exit;
-        }
-
-        // 3. Captura os dados de entrega e pagamento enviados pelo formulário
-        $cep = trim($_POST['cep'] ?? '');
-        $endereco = trim($_POST['endereco'] ?? '');
-        $numero = trim($_POST['numero'] ?? '');
-        $complemento = trim($_POST['complemento'] ?? '');
-        $bairro = trim($_POST['bairro'] ?? '');
-        $cidade = trim($_POST['cidade'] ?? '');
-        $estado = trim($_POST['estado'] ?? '');
-        $metodoPagamento = $_POST['metodo_pagamento'] ?? '';
-
-        // Validação simples (garantir que os campos obrigatórios foram preenchidos)
-        if (empty($cep) || empty($endereco) || empty($numero) || empty($bairro) || empty($cidade) || empty($estado) || empty($metodoPagamento)) {
-            $_SESSION['error'] = "Por favor, preencha todos os campos obrigatórios do endereço e pagamento.";
-            header('Location: /checkout');
-            exit;
-        }
-
-        // 4. Calcula o total geral do pedido
-        $total = 0;
-        foreach ($cartItems as $item) {
-            $total += $item['price'] * $item['quantity'];
+        // Calcula o valor total do carrinho em CENTAVOS (R$ 10,00 vira 1000 centavos)
+        $totalCentavos = 0;
+        foreach ($_SESSION['cart'] as $item) {
+            $totalCentavos += ($item['price'] * $item['quantity']) * 100;
         }
 
         try {
-            // 5. Conecta ao MongoDB usando a sua classe de Config
-            $db = Database::getDatabase();
-
-            // 6. Monta a estrutura do documento do Pedido
-            $orderDocument = [
-                'user_id' => $_SESSION['user']['id'], // ID do usuário logado
-                'items' => array_values($cartItems), // Mantém a lista de itens comprados
-                'total' => (float)$total,
-                'shipping_address' => [
-                    'cep' => $cep,
-                    'endereco' => $endereco,
-                    'numero' => $numero,
-                    'complemento' => $complemento,
-                    'bairro' => $bairro,
-                    'cidade' => $cidade,
-                    'estado' => strtoupper($estado),
+            // Cria a intenção de pagamento no Stripe
+            $paymentIntent = PaymentIntent::create([
+                'amount' => $totalCentavos,
+                'currency' => 'brl',
+                'automatic_payment_methods' => [
+                    'enabled' => true,
                 ],
-                'payment_method' => $metodoPagamento,
-                'status' => 'pendente', // Todo pedido novo nasce pendente
-                'created_at' => new \MongoDB\BSON\UTCDateTime(time() * 1000)
-            ];
+            ]);
 
-            // 7. Insere na coleção "orders"
-            $db->orders->insertOne($orderDocument);
+            // Guardamos temporariamente o ID do pagamento na sessão
+            $_SESSION['payment_intent_id'] = $paymentIntent->id;
 
-            $productsCollection = $db->selectCollection('products');
-            foreach ($cartItems as $productId => $item) {
-                $productsCollection->updateOne(
-                    ['_id' => new \MongoDB\BSON\ObjectId($productId)],
-                    ['$inc' => ['stock' => -((int)$item['quantity'])]]
-                );
-            }
+            // Chave temporária que o JS do Stripe usará para renderizar o form de forma segura
+            $clientSecret = $paymentIntent->client_secret;
 
-            // 8. Limpa o carrinho da sessão já que o pedido foi fechado com sucesso
-            unset($_SESSION['cart']);
-
-            // Redireciona para uma página de sucesso (ou para a página "Minha Conta" onde listaremos os pedidos)
-            header('Location: /minha-conta?sucesso=pedido_realizado');
-            exit;
+            require_once __DIR__ . '/../Views/checkout.php';
 
         } catch (\Exception $e) {
-            // Se der erro no banco, exibe a mensagem para debug local
-            echo "Erro ao salvar o pedido: " . $e->getMessage();
+            echo "Erro ao processar pagamento com o Stripe: " . $e->getMessage();
+        }
+    }
+
+    public function sucesso()
+    {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $db = Database::getDatabase();
+
+        Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
+        
+        // O Stripe envia o ID do pagamento na URL de redirecionamento como "payment_intent"
+        $paymentIntentId = $_GET['payment_intent'] ?? $_SESSION['payment_intent_id'] ?? null;
+
+        if (!$paymentIntentId) {
+            header('Location: /');
             exit;
+        }
+
+        try {
+            // Confirmamos o status real direto na API do Stripe
+            $intent = PaymentIntent::retrieve($paymentIntentId);
+
+            // Se o pagamento foi efetuado com sucesso pelo Stripe!
+            if ($intent->status === 'succeeded') {
+                
+                // Prepara a estrutura do pedido para salvar no MongoDB
+                $novoPedido = [
+                    'user_id' => $_SESSION['user']['id'] ?? $_SESSION['user']['_id'] ?? 'Guest',
+                    'items' => $_SESSION['cart'],
+                    'total' => $intent->amount / 100, 
+                    'payment_method' => 'stripe_card',
+                    'status' => 'concluido', 
+                    'created_at' => new \MongoDB\BSON\UTCDateTime(),
+                    'stripe_payment_id' => $paymentIntentId
+                ];
+
+                // 1. Salva na coleção 'orders'
+                $db->orders->insertOne($novoPedido);
+
+                // 2. Loop para subtrair a quantidade vendida do estoque
+                foreach ($_SESSION['cart'] as $item) {
+                    if (isset($item['id'])) {
+                        $productId = new \MongoDB\BSON\ObjectId($item['id']);
+                        $quantidadeVendida = (int)$item['quantity'];
+
+                        $db->products->updateOne(
+                            ['_id' => $productId],
+                            ['$inc' => ['stock' => -$quantidadeVendida]]
+                        );
+                    }
+                }
+
+                // 3. Limpa o carrinho
+                $_SESSION['cart'] = [];
+                
+                // 4. Carrega a view de sucesso moderna e elegante!
+                require_once __DIR__ . '/../Views/checkout-success.php';
+
+            } else {
+                echo "O pagamento não foi aprovado pelo Stripe. Status: " . $intent->status;
+            }
+
+        } catch (\Exception $e) {
+            echo "Erro ao processar confirmação de pagamento: " . $e->getMessage();
         }
     }
 }

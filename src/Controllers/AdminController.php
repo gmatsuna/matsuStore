@@ -24,9 +24,107 @@ class AdminController
     {
         $db = Database::getDatabase();
 
-        // 📊 Aqui futuramente buscaremos os dados reais do MongoDB para os gráficos
         $totalUsers = $db->users->countDocuments();
         $totalProducts = $db->products->countDocuments();
+
+        // ==========================================
+        // 📊 GRÁFICO 1: Novos Clientes (Visão Diária)
+        // ==========================================
+        $clientes = $db->users->find(['role' => 'client']);
+        $agrupadoClientes = [];
+
+        foreach ($clientes as $cliente) {
+            $createdAt = null;
+            $clienteArray = is_object($cliente) ? (array) $cliente : $cliente;
+
+            if (isset($clienteArray['created_at'])) {
+                $createdAt = $clienteArray['created_at'];
+            } elseif (is_object($cliente) && isset($cliente->created_at)) {
+                $createdAt = $cliente->created_at;
+            }
+
+            if ($createdAt instanceof \MongoDB\BSON\UTCDateTime) {
+                $dateTime = $createdAt->toDateTime();
+                $dateTime->setTimezone(new \DateTimeZone('America/Sao_Paulo'));
+                
+                // 🌟 ALTERAÇÃO: Agora a chave guarda o dia também (Ano-Mês-Dia)
+                $chave = $dateTime->format('Y-m-d'); 
+                
+                if (!isset($agrupadoClientes[$chave])) {
+                    $agrupadoClientes[$chave] = 0;
+                }
+                $agrupadoClientes[$chave]++;
+            }
+        }
+
+        // Ordena cronologicamente por data (ex: 2026-07-01 antes de 2026-07-02)
+        ksort($agrupadoClientes);
+        
+        $labelsClientes = [];
+        $valoresClientes = [];
+        
+        foreach ($agrupadoClientes as $chave => $total) {
+            // Converte a chave 'YYYY-MM-DD' em um formato legível para o gráfico: 'DD/MM'
+            $dataFormatada = date('d/m', strtotime($chave));
+            
+            $labelsClientes[] = $dataFormatada;
+            $valoresClientes[] = $total;
+        }
+
+        // Fallback caso a coleção esteja vazia
+        if (empty($labelsClientes)) {
+            $labelsClientes = [date('d/m')];
+            $valoresClientes = [0]; 
+        }
+
+        // ==========================================
+        // 📊 GRÁFICO 2: Vendas Efetuadas por Item no Último Mês
+        // ==========================================
+        
+        // Filtramos os pedidos concluídos nos últimos 30 dias
+        $trintaDiasAtras = new \MongoDB\BSON\UTCDateTime((time() - (30 * 24 * 60 * 60)) * 1000);
+        
+        // Buscamos os pedidos desse período
+        // Ajuste o nome da coleção se for 'pedidos', 'vendas', etc.
+        $pedidos = $db->orders->find([
+            'created_at' => ['$gte' => $trintaDiasAtras],
+            'status' => 'concluido' // garante que contamos apenas vendas de fato concluídas
+        ]);
+
+        $vendasPorItem = [];
+
+        foreach ($pedidos as $pedido) {
+            $pedidoArray = is_object($pedido) ? (array) $pedido : $pedido;
+            
+            // Verifica se o pedido contém itens
+            if (isset($pedidoArray['items']) && (is_array($pedidoArray['items']) || is_object($pedidoArray['items']))) {
+                foreach ($pedidoArray['items'] as $item) {
+                    $itemArray = (array) $item;
+                    $nomeProduto = $itemArray['name'] ?? $itemArray['title'] ?? 'Produto sem Nome';
+                    $quantidade = (int)($itemArray['quantity'] ?? 1);
+
+                    if (!isset($vendasPorItem[$nomeProduto])) {
+                        $vendasPorItem[$nomeProduto] = 0;
+                    }
+                    $vendasPorItem[$nomeProduto] += $quantidade;
+                }
+            }
+        }
+
+        // Ordenamos os produtos do mais vendido para o menos vendido
+        arsort($vendasPorItem);
+
+        // Limitamos para exibir no máximo os 7 produtos mais vendidos para não poluir o layout
+        $vendasPorItemLimitado = array_slice($vendasPorItem, 0, 7, true);
+
+        $labelsProdutos = array_keys($vendasPorItemLimitado);
+        $valoresProdutos = array_values($vendasPorItemLimitado);
+
+        // Fallback de dados de teste caso você não tenha vendas cadastradas nos últimos 30 dias
+        if (empty($labelsProdutos)) {
+            $labelsProdutos = ["Luva de Beisebol Pro", "Taco de Ipê Premium", "Bola NPB Oficial", "Boné MatsuStore"];
+            $valoresProdutos = [15, 12, 8, 5]; // Exemplo ilustrativo
+        }
 
         require_once __DIR__ . '/../Views/admin/dashboard.php';
     }

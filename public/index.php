@@ -27,6 +27,7 @@ $routes = [
         '/cadastro'           => [\App\Controllers\AuthController::class, 'showRegister'],
         '/login'              => [\App\Controllers\AuthController::class, 'showLogin'],
         '/checkout'           => [\App\Controllers\CheckoutController::class, 'index'],
+        '/checkout/sucesso'   => [\App\Controllers\CheckoutController::class, 'sucesso'],
         '/esqueci-senha'      => [\App\Controllers\AuthController::class, 'showForgotPassword'],
         '/redefinir-senha'    => [\App\Controllers\AuthController::class, 'showResetPassword'],
         '/employee'           => [\App\Controllers\EmployeeController::class, 'index'],

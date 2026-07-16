@@ -1,140 +1,78 @@
 <?php require __DIR__ . '/partials/header.php'; ?>
-<?php require __DIR__ . '/partials/sidebar.php'; ?>
 
-<div class="space-y-6 w-full">
-    
-    <div class="flex items-center gap-2 border-b border-gray-200 pb-4">
-        <span class="text-2xl">🔒</span>
-        <h1 class="text-2xl font-bold tracking-tight text-gray-900">Finalizar Pedido</h1>
-    </div>
+<div class="max-w-3xl mx-auto w-full py-12 px-4 flex-1">
+    <h2 class="text-3xl font-black text-gray-900 tracking-tight mb-8 uppercase">Finalizar Compra</h2>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        
-        <form id="form-checkout" action="/pedido/finalizar" method="POST" class="lg:col-span-2 space-y-6">
-            
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4">
-                <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
-                    <span class="text-emerald-600 font-bold">01</span>
-                    <h2 class="text-lg font-bold text-gray-900">Endereço de Entrega</h2>
-                </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="sm:col-span-1">
-                        <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">CEP</label>
-                        <input type="text" name="cep" required placeholder="00000-000"
-                               class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition font-semibold">
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Logradouro (Rua/Avenida)</label>
-                        <input type="text" name="endereco" required placeholder="Ex: Rua dos Rebatedores"
-                               class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Número</label>
-                        <input type="text" name="numero" required placeholder="123"
-                               class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Complemento</label>
-                        <input type="text" name="complemento" placeholder="Apto, Bloco, etc. (Opcional)"
-                               class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Bairro</label>
-                        <input type="text" name="bairro" required
-                               class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Cidade</label>
-                        <input type="text" name="cidade" required
-                               class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase text-gray-400 tracking-wider mb-1">Estado</label>
-                        <input type="text" name="estado" required placeholder="SP" maxlength="2"
-                               class="w-full border border-gray-200 rounded-xl p-3 bg-gray-50 text-sm focus:bg-white focus:ring-2 focus:ring-emerald-600 outline-none transition uppercase text-center font-semibold">
-                    </div>
-                </div>
-            </div>
+    <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+        <h3 class="text-lg font-bold text-gray-900 mb-6">Dados do Cartão</h3>
 
-            <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4">
-                <div class="flex items-center gap-2 border-b border-gray-100 pb-3">
-                    <span class="text-emerald-600 font-bold">02</span>
-                    <h2 class="text-lg font-bold text-gray-900">Forma de Pagamento</h2>
+        <form id="payment-form">
+            <div id="payment-element" class="mb-6">
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <label class="relative flex items-center justify-between p-4 border border-emerald-600 bg-emerald-50/30 rounded-xl cursor-pointer select-none">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">📱</span>
-                            <div>
-                                <p class="text-sm font-bold text-gray-900">Pix</p>
-                                <p class="text-xs text-gray-500">Aprovação imediata</p>
-                            </div>
-                        </div>
-                        <input type="radio" name="metodo_pagamento" value="pix" checked class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300">
-                    </label>
+            <div id="error-message" class="text-red-600 text-sm font-semibold mb-4 hidden"></div>
 
-                    <label class="relative flex items-center justify-between p-4 border border-gray-200 hover:border-gray-300 rounded-xl cursor-pointer select-none">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">💳</span>
-                            <div>
-                                <p class="text-sm font-bold text-gray-900">Cartão de Crédito</p>
-                                <p class="text-xs text-gray-500">Em até 12x sem juros</p>
-                            </div>
-                        </div>
-                        <input type="radio" name="metodo_pagamento" value="cartao" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300">
-                    </label>
-                </div>
-            </div>
-
-            <div class="block lg:hidden">
-                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-4 px-6 rounded-xl transition shadow-md uppercase tracking-wider text-sm">
-                    Confirmar e Pagar R$ <?= number_format($subtotal, 2, ',', '.') ?>
-                </button>
-            </div>
+            <button id="submit-button" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-xl transition shadow-md flex items-center justify-center gap-2">
+                <span id="button-text">Pagar Agora</span>
+                <span id="spinner" class="hidden">🔄</span>
+            </button>
         </form>
-
-        <div class="bg-white rounded-2xl border border-gray-200 p-6 shadow-sm space-y-4 sticky top-24">
-            <h2 class="text-lg font-bold text-gray-900 border-b border-gray-100 pb-3">Resumo do Pedido</h2>
-            
-            <div class="divide-y divide-gray-100 max-h-48 overflow-y-auto pr-1 space-y-2">
-                <?php foreach ($cartItems as $item): ?>
-                    <div class="flex items-center justify-between text-sm pt-2 first:pt-0">
-                        <div class="min-w-0 flex-1 pr-2">
-                            <p class="font-bold text-gray-800 truncate"><?= htmlspecialchars($item['name']) ?></p>
-                            <p class="text-xs text-gray-500">Qtd: <?= $item['quantity'] ?></p>
-                        </div>
-                        <span class="font-semibold text-gray-900 shrink-0">
-                            R$ <?= number_format($item['price'] * $item['quantity'], 2, ',', '.') ?>
-                        </span>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-
-            <div class="border-t border-gray-100 pt-4 space-y-2 text-sm text-gray-600">
-                <div class="flex justify-between">
-                    <span>Subtotal dos itens</span>
-                    <span class="font-semibold text-gray-900">R$ <?= number_format($subtotal, 2, ',', '.') ?></span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span>Frete</span>
-                    <span class="text-emerald-600 font-bold uppercase text-xs bg-emerald-50 px-2 py-0.5 rounded-full">Grátis</span>
-                </div>
-                <div class="border-t border-gray-100 pt-3 flex justify-between items-baseline">
-                    <span class="text-base font-bold text-gray-900">Total a pagar</span>
-                    <span class="text-2xl font-black text-emerald-600">R$ <?= number_format($subtotal, 2, ',', '.') ?></span>
-                </div>
-            </div>
-
-            <div class="hidden lg:block pt-2">
-                <button type="button" onclick="document.getElementById('form-checkout').submit();" class="w-full bg-gray-900 hover:bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-xl text-sm transition shadow-sm uppercase tracking-wider text-center">
-                    Finalizar Pedido ➔
-                </button>
-            </div>
-        </div>
-
     </div>
 </div>
+
+<script src="https://js.stripe.com/v3/"></script>
+
+<script>
+    // Configura o Stripe Elements com sua chave pública
+    const stripe = Stripe('<?= getenv('STRIPE_PUBLISHABLE_KEY') ?>');
+    const clientSecret = "<?= $clientSecret ?>";
+
+    // Combina as cores do formulário do Stripe com o Tailwind da MatsuStore
+    const appearance = {
+        theme: 'stripe',
+        variables: {
+            colorPrimary: '#10b981', // Emerald-600
+            colorBackground: '#ffffff',
+            colorText: '#1f2937',
+            borderRadius: '12px',
+        }
+    };
+
+    const elements = stripe.elements({ clientSecret, appearance });
+    
+    // Cria o elemento unificado de cartão
+    const paymentElement = elements.create('payment');
+    paymentElement.mount('#payment-element');
+
+    const form = document.getElementById('payment-form');
+    const submitBtn = document.getElementById('submit-button');
+    const spinner = document.getElementById('spinner');
+    const errorMsg = document.getElementById('error-message');
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        submitBtn.disabled = true;
+        spinner.classList.remove('hidden');
+        errorMsg.classList.add('hidden');
+
+        // Envia o pagamento direto para confirmação no Stripe
+        const { error } = await stripe.confirmPayment({
+            elements,
+            confirmParams: {
+                // Rota que criamos no Passo 3 para onde o usuário será redirecionado
+                return_url: window.location.origin + "/checkout/sucesso",
+            },
+        });
+
+        // Caso ocorra falha de saldo, digitação errada etc.
+        if (error) {
+            errorMsg.textContent = error.message;
+            errorMsg.classList.remove('hidden');
+            submitBtn.disabled = false;
+            spinner.classList.add('hidden');
+        }
+    });
+</script>
 
 <?php require __DIR__ . '/partials/footer.php'; ?>
