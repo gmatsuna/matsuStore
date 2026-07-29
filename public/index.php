@@ -10,6 +10,37 @@ error_reporting(E_ALL);
 // 2. Carrega o Autoloader do Composer (essencial para o MVC e para o MongoDB)
 require_once __DIR__ . '/../vendor/autoload.php';
 
+// 🌟 CARREGADOR NATIVO DE .ENV 🌟
+function loadEnv($filePath) {
+    if (!file_exists($filePath)) {
+        return;
+    }
+
+    $lines = file($filePath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        // Ignores comentários (#)
+        if (strpos(trim($line), '#') === 0) {
+            continue;
+        }
+
+        // Separa chave e valor pelo sinal de '='
+        if (strpos($line, '=') !== false) {
+            list($name, $value) = explode('=', $line, 2);
+            $name = trim($name);
+            $value = trim($value, " \t\n\r\0\x0B\"'"); // Remove espaços e aspas
+
+            if (!empty($name)) {
+                putenv("{$name}={$value}");
+                $_ENV[$name] = $value;
+                $_SERVER[$name] = $value;
+            }
+        }
+    }
+}
+
+// Executa a leitura do arquivo .env localizado na raiz do projeto
+loadEnv(__DIR__ . '/../.env');
+
 // 3. Captura a URL (URI) que o usuário digitou
 $uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
